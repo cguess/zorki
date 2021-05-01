@@ -42,7 +42,7 @@ module Zorki
 
         def scrape(usernames)
           usernames.map do |username|
-            user_hash = Zorki::Scraper::UserScraper.new.parse(username)
+            user_hash = Zorki::UserScraper.new.parse(username)
             User.new(user_hash)
           end
         end
