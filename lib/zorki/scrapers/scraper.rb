@@ -2,6 +2,7 @@
 
 # require_relative "user_scraper"
 require "capybara/dsl"
+require "dotenv/load"
 
 Capybara.default_driver = :selenium_chrome
 Capybara.app_host = "https://instagram.com"
@@ -11,7 +12,7 @@ module Zorki
   class Scraper
     include Capybara::DSL
 
-    private
+  private
 
     def login
       # Go to the home page
@@ -19,8 +20,8 @@ module Zorki
       # Check if we're redirected to a login page, if we aren't we're already logged in
       return unless page.has_xpath?('//*[@id="loginForm"]/div/div[3]/button')
 
-      fill_in("username", with: "cguess@gmail.com")
-      fill_in("password", with: "PLGArwZ8QKNqXyG")
+      fill_in("username", with: ENV["INSTAGRAM_USER_NAME"])
+      fill_in("password", with: ENV["INSTAGRAM_PASSWORD"])
       click_on("Log In")
 
       # No we don't want to save our login credentials

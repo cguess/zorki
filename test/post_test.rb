@@ -15,9 +15,9 @@ class PostTest < Minitest::Test
     assert_equal post.images.count, 3
     assert post.text.start_with? "Opening Day 2010"
     assert_equal post.date, DateTime.parse("Apr 1, 2021")
-    assert number_of_likes > 1
-    assert post.user.type_of?(Zorki::User)
+    assert post.number_of_likes > 1
+    assert post.user.is_a?(Zorki::User)
     assert_equal post.user.username, "petesouza"
-    assert_equal post.id, "CNJJM2elXQ0ß"
+    assert_equal post.id, "CNJJM2elXQ0"
   end
 end
