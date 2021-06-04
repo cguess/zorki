@@ -22,22 +22,30 @@ module Zorki
       images = []
       if page.has_xpath?('//*[@id="react-root"]/section/main/div/div[1]/article/div[2]/div/div/div[1]/img')
         image_url = find(:xpath, '//*[@id="react-root"]/section/main/div/div[1]/article/div[2]/div/div/div[1]/img')["src"]
-        images << fetch_image(image_url)
+        images << Zorki.retrieve_image(image_url)
       else
         # If we have a slideshow here we'll loop, clicking the advance buttons as we go, until we hit the end.
+
+        # The first image has this xpath
+        image_xpath = '//*[@id="react-root"]/section/main/div/div[1]/article/div[2]/div/div[1]/div[2]/div/div/div/ul/li[2]/div/div/div/div[1]/img'
         loop do
-          image_url = find(:xpath, '//*[@id="react-root"]/section/main/div/div[1]/article/div[2]/div/div[1]/div[2]/div/div/div/ul/li[2]/div/div/div/div[1]')
-          images << fetch_image(image_url)
+          srcset = find(:xpath, image_xpath)['srcset']
+          # Parse the srcset to get the largest version of the image
+          image_url = url_for_largest_resolution_from_srcset(srcset)
+          images << Zorki.retrieve_image(image_url)
           buttons = all(:xpath, '//*[@id="react-root"]/section/main/div/div[1]/article/div[2]/div/div[1]/div[2]/div/button')
+
+          # From here on images have the following xpath (probably because the previous image is still in the DOM just offscreen)
+          image_xpath = '//*[@id="react-root"]/section/main/div/div[1]/article/div[2]/div/div[1]/div[2]/div/div/div/ul/li[3]/div/div/div/div[1]/img'
           # Images count is one if we're on the first slide, so we'll click the only button we should find
           # We need to sleep after each one to give it time to catch up so we can get the new buttons
           if images.count == 1
             buttons[0].click
-            sleep(1)
+            sleep(10)
           elsif buttons.count > 1
             # If there's more than one button we want the second one, since that'll advance us
             buttons[1].click
-            sleep(1)
+            sleep(10)
           else
             # Otherwise, we're at the end, go with god.
             break
@@ -84,6 +92,10 @@ module Zorki
 
       # Multiply everything and insure we get an integer back
       (number * multiplier).to_i
+    end
+
+    def url_for_largest_resolution_from_srcset(srcset)
+      srcset.split(',').last.split(' ').first
     end
   end
 end

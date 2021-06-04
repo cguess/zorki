@@ -32,6 +32,7 @@ module Zorki
       request = Typhoeus::Request.new(url, followlocation: true)
       request.on_complete do |response|
         if request.success?
+          byebug
           return request.body
         elsif request.timed_out?
           raise Zorki::Error("Fetching image at #{url} timed out")
