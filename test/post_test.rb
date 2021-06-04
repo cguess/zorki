@@ -9,10 +9,10 @@ class PostTest < Minitest::Test
 
   # Note: if this fails, check the account, the number may just have changed
   # We're using Pete Souza because Obama's former photographer isn't likely to be taken down
-  # def test_a_single_image_post_returns_properly_when_scraped
-  #   post = Zorki::Post.lookup(["COOCAfCFpkP"]).first
-  #   assert_equal post.images.count, 1
-  # end
+  def test_a_single_image_post_returns_properly_when_scraped
+    post = Zorki::Post.lookup(["COOCAfCFpkP"]).first
+    assert_equal post.images.count, 1
+  end
 
   def test_a_slideshow_post_returns_properly_when_scraped
     post = Zorki::Post.lookup(["CNJJM2elXQ0"]).first

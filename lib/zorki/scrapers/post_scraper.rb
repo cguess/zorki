@@ -21,7 +21,8 @@ module Zorki
       # by looking for a single image, if it's not there, we assume the alternative.
       images = []
       if page.has_xpath?('//*[@id="react-root"]/section/main/div/div[1]/article/div[2]/div/div/div[1]/img')
-        image_url = find(:xpath, '//*[@id="react-root"]/section/main/div/div[1]/article/div[2]/div/div/div[1]/img')["src"]
+        srcset = find(:xpath, '//*[@id="react-root"]/section/main/div/div[1]/article/div[2]/div/div/div[1]/img')["srcset"]
+        image_url = url_for_largest_resolution_from_srcset(srcset)
         images << Zorki.retrieve_image(image_url)
       else
         # If we have a slideshow here we'll loop, clicking the advance buttons as we go, until we hit the end.
