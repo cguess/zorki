@@ -18,22 +18,22 @@ module Zorki
       # - *Profile image
       login
       visit("/#{username}/")
+      graphql_script = find_graphql_script
 
       # Get the username (to verify we're on the right page here)
-      scraped_username = find(:xpath, '//*[@id="react-root"]/section/main/div/header/section/div[1]/h2').text
+      scraped_username = graphql_script["entry_data"]["ProfilePage"].first["graphql"]["user"]["username"]
       raise Zorki::Error unless username == scraped_username
 
-      profile_image_url = find(:xpath, '//*[@id="react-root"]/section/main/div/header/div/div/span/img')["src"]
+      profile_image_url = graphql_script["entry_data"]["ProfilePage"].first["graphql"]["user"]["profile_pic_url_hd"]
       to_return = {
-        name: find(:xpath, '//*[@id="react-root"]/section/main/div/header/section/div[2]/h1').text,
+        name: graphql_script["entry_data"]["ProfilePage"].first["graphql"]["user"]["full_name"],
         username: username,
-        number_of_posts: number_string_to_integer(find(:xpath, '//*[@id="react-root"]/section/main/div/header/section/ul/li[1]/span/span').text),
-        number_of_followers: number_string_to_integer(find(:xpath, '//*[@id="react-root"]/section/main/div/header/section/ul/li[2]/a/span').text),
-        number_of_following: number_string_to_integer(find(:xpath, '//*[@id="react-root"]/section/main/div/header/section/ul/li[3]/a/span').text),
-        verified: page.has_xpath?('//*[@id="react-root"]/section/main/div/header/section/div[1]/div[1]/span[@title="Verified"]'),
-        title: find(:xpath, '//*[@id="react-root"]/section/main/div/header/section/ul/li[3]/a/span').text,
-        profile: find(:xpath, '//*[@id="react-root"]/section/main/div/header/section/div[2]/span').text,
-        profile_link: find(:xpath, '//*[@id="react-root"]/section/main/div/header/section/div[2]/a[1]').text,
+        number_of_posts: graphql_script["entry_data"]["ProfilePage"].first["graphql"]["user"]["edge_owner_to_timeline_media"]["count"],
+        number_of_followers: graphql_script["entry_data"]["ProfilePage"].first["graphql"]["user"]["edge_followed_by"]["count"],
+        number_of_following: graphql_script["entry_data"]["ProfilePage"].first["graphql"]["user"]["edge_follow"]["count"],
+        verified: graphql_script["entry_data"]["ProfilePage"].first["graphql"]["user"]["is_verified"],
+        profile: graphql_script["entry_data"]["ProfilePage"].first["graphql"]["user"]["biography"],
+        profile_link: graphql_script["entry_data"]["ProfilePage"].first["graphql"]["user"]["external_url"],
         profile_image: fetch_image(profile_image_url)
       }
 
