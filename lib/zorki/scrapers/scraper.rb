@@ -3,6 +3,7 @@
 # require_relative "user_scraper"
 require "capybara/dsl"
 require "dotenv/load"
+require "oj"
 
 Capybara.default_driver = :selenium_chrome
 Capybara.app_host = "https://instagram.com"
@@ -32,7 +33,6 @@ module Zorki
       request = Typhoeus::Request.new(url, followlocation: true)
       request.on_complete do |response|
         if request.success?
-          byebug
           return request.body
         elsif request.timed_out?
           raise Zorki::Error("Fetching image at #{url} timed out")

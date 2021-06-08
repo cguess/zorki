@@ -17,7 +17,9 @@ module Zorki
                 :text,
                 :date,
                 :number_of_likes,
-                :user
+                :user,
+                :video,
+                :video_preview_image
 
   private
 
@@ -28,6 +30,8 @@ module Zorki
       @date = hash[:date]
       @number_of_likes = hash[:number_of_likes]
       @user = hash[:user]
+      @video = hash[:video]
+      @video_preview_image = hash[:video_preview_image]
     end
 
     class << self

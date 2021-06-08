@@ -22,7 +22,7 @@ module Zorki
 
   # Get an image from a URL and save to a temp folder set in the configuration under
   # temp_storage_location
-  def self.retrieve_image(url)
+  def self.retrieve_media(url)
     response = Typhoeus.get(url)
 
     # Get the file extension if it's in the file
