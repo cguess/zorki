@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    Zorki (0.1.0)
+    zorki (0.1.0)
       apparition
       capybara
       oj
@@ -71,9 +71,6 @@ GEM
       rack (>= 1.1)
       rubocop (>= 0.90.0, < 2.0)
     ruby-progressbar (1.11.0)
-    sorbet (0.5.6393)
-      sorbet-static (= 0.5.6393)
-    sorbet-static (0.5.6393-universal-darwin-20)
     typhoeus (1.4.0)
       ethon (>= 0.9.0)
     tzinfo (2.0.4)
@@ -90,14 +87,13 @@ PLATFORMS
   x86_64-darwin-20
 
 DEPENDENCIES
-  Zorki!
   byebug
   dotenv (~> 2.7.6)
   minitest (~> 5.0)
   rake (~> 13.0)
   rubocop (~> 1.7)
   rubocop-rails (~> 2.9.1)
-  sorbet
+  zorki!
 
 BUNDLED WITH
    2.2.3

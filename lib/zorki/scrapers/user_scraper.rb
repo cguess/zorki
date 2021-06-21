@@ -34,7 +34,8 @@ module Zorki
         verified: graphql_script["entry_data"]["ProfilePage"].first["graphql"]["user"]["is_verified"],
         profile: graphql_script["entry_data"]["ProfilePage"].first["graphql"]["user"]["biography"],
         profile_link: graphql_script["entry_data"]["ProfilePage"].first["graphql"]["user"]["external_url"],
-        profile_image: fetch_image(profile_image_url)
+        profile_image: Zorki.retrieve_media(profile_image_url),
+        profile_image_url: profile_image_url
       }
 
       to_return

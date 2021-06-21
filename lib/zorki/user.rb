@@ -21,7 +21,8 @@ module Zorki
                 :verified,
                 :profile,
                 :profile_link,
-                :profile_image
+                :profile_image,
+                :profile_image_url
 
   private
 
@@ -35,6 +36,7 @@ module Zorki
       @profile = hash[:profile]
       @profile_link = hash[:profile_link]
       @profile_image = hash[:profile_image]
+      @profile_image_url = hash[:profile_image_url]
     end
 
     class << self

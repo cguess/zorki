@@ -3,7 +3,7 @@
 require_relative "lib/zorki/version"
 
 Gem::Specification.new do |spec|
-  spec.name          = "Zorki"
+  spec.name          = "zorki"
   spec.version       = Zorki::VERSION
   spec.authors       = ["Christopher Guess"]
   spec.email         = ["cguess@gmail.com"]
