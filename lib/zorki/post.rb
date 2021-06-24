@@ -13,24 +13,24 @@ module Zorki
     end
 
     attr_reader :id,
-                :images,
+                :image_file_names,
                 :text,
                 :date,
                 :number_of_likes,
                 :user,
-                :video,
+                :video_file_name,
                 :video_preview_image
 
   private
 
     def initialize(hash = {})
       @id = hash[:id]
-      @images = hash[:images]
+      @image_file_names = hash[:images]
       @text = hash[:text]
       @date = hash[:date]
       @number_of_likes = hash[:number_of_likes]
       @user = hash[:user]
-      @video = hash[:video]
+      @video_file_name = hash[:video]
       @video_preview_image = hash[:video_preview_image]
     end
 
