@@ -50,6 +50,8 @@ module Zorki
       # This has to run last since it switches pages
       user = User.lookup([username]).first
 
+      finish
+      
       {
         images: images,
         video: video,

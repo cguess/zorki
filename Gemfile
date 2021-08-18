@@ -16,3 +16,5 @@ gem "rubocop-rails", "~> 2.9.1", require: false # Rails specific styles
 gem "dotenv", "~> 2.7.6"
 
 gem "byebug"
+
+gem "headless"

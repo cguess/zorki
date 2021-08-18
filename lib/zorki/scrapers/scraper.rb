@@ -4,6 +4,8 @@
 require "capybara/dsl"
 require "dotenv/load"
 require "oj"
+require "selenium-webdriver"
+require "headless"
 
 Capybara.default_driver = :selenium_chrome
 Capybara.app_host = "https://instagram.com"
@@ -12,6 +14,15 @@ Capybara.default_max_wait_time = 15
 module Zorki
   class Scraper
     include Capybara::DSL
+
+    def initialize
+      @headless = Headless.new
+      @headless.start
+    end
+
+    def finish
+      @headless.stop
+    end
 
     # Instagram uses GraphQL (like most of Facebook I think), and returns an object that actually
     # is used to seed the page. We can just parse this for most things.

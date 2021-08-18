@@ -36,11 +36,14 @@ GEM
     ethon (0.14.0)
       ffi (>= 1.15.0)
     ffi (1.15.1)
+    headless (2.3.1)
     i18n (1.8.10)
       concurrent-ruby (~> 1.0)
     mini_mime (1.1.0)
     minitest (5.14.4)
     nokogiri (1.11.7-x86_64-darwin)
+      racc (~> 1.4)
+    nokogiri (1.11.7-x86_64-linux)
       racc (~> 1.4)
     oj (3.11.5)
     parallel (1.20.1)
@@ -85,10 +88,12 @@ GEM
 
 PLATFORMS
   x86_64-darwin-20
+  x86_64-linux
 
 DEPENDENCIES
   byebug
   dotenv (~> 2.7.6)
+  headless
   minitest (~> 5.0)
   rake (~> 13.0)
   rubocop (~> 1.7)
@@ -96,4 +101,4 @@ DEPENDENCIES
   zorki!
 
 BUNDLED WITH
-   2.2.3
+   2.2.22

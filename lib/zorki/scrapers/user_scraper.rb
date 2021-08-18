@@ -38,6 +38,8 @@ module Zorki
         profile_image_url: profile_image_url
       }
 
+      finish
+
       to_return
     end
   end
