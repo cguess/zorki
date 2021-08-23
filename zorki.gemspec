@@ -35,8 +35,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "apparition" # A Chrome driver for Capybara
   spec.add_dependency "typhoeus" # For making API requests
   spec.add_dependency "oj" # A faster JSON parser/loader than stdlib
-  spec.add_dependency "headless" # This allows XVFB to run Chrome
-  spec.add_dependency "selenium-webdriver"
+  spec.add_dependency "selenium-webdriver" # Webdriver selenium
 
   # For more information and examples about making a new gem, checkout our
   # guide at: https://bundler.io/guides/creating_gem.html
