@@ -4,6 +4,21 @@ Welcome to your new gem! In this directory, you'll find the files you need to be
 
 TODO: Delete this and the text above, and describe your gem
 
+## Pre Reqs
+
+This requires the chromedriver
+
+### MacOS
+
+`brew install chromedriver`
+
+### Raspberry OS (aka Rasbian / Debian)
+Since this requires ARMHF support it's not through regular sources. However, the maintainers of Raspberry OS has made their own!
+`sudo apt install chromium-chromedriver`
+
+### Debian/Ubuntu
+`sudo apt install chromedriver` (should work)
+
 ## Installation
 
 Add this line to your application's Gemfile:
