@@ -6,3 +6,5 @@ set -vx
 bundle install
 
 # Do any other automated setup that you need to do here
+
+# We may want to set up chromedriver automatically here, but that'll require a lot of work per system

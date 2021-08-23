@@ -7,7 +7,7 @@ Gem::Specification.new do |spec|
   spec.version       = Zorki::VERSION
   spec.authors       = ["Christopher Guess"]
   spec.email         = ["cguess@gmail.com"]
-
+  
   spec.summary       = "A gem to scrape Instagram pages for archive purposes."
   # spec.description   = "TODO: Write a longer description or delete this line."
   # spec.homepage      = "TODO: Put your gem's website or public repo URL here."
@@ -36,6 +36,9 @@ Gem::Specification.new do |spec|
   spec.add_dependency "typhoeus" # For making API requests
   spec.add_dependency "oj" # A faster JSON parser/loader than stdlib
   spec.add_dependency "selenium-webdriver" # Webdriver selenium
+
+  spec.add_dependency "byebug" # Webdriver selenium
+  spec.add_dependency "dotenv"
 
   # For more information and examples about making a new gem, checkout our
   # guide at: https://bundler.io/guides/creating_gem.html
