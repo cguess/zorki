@@ -1,5 +1,0 @@
-#!/usr/bin/env ruby
-
-require 'zorki'
-
-print "Hello World"
