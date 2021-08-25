@@ -3,7 +3,9 @@ PATH
   specs:
     zorki (0.1.0)
       apparition
+      byebug
       capybara
+      dotenv
       oj
       selenium-webdriver
       typhoeus
