@@ -44,7 +44,7 @@ module Zorki
       end
 
       text = graphql_object["items"][0]["caption"]["text"]
-      date = graphql_object["items"][0]["taken_at"]
+      date = DateTime.strptime(graphql_object["items"][0]["taken_at"].to_s, "%s")
       number_of_likes = graphql_object["items"][0]["like_count"]
       username = graphql_object["items"][0]["caption"]["user"]["username"]
       # This has to run last since it switches pages
