@@ -21,6 +21,8 @@ module Zorki
     def find_graphql_script
       scripts = all("script", visible: false)
       graphql_script = scripts.find { |s| s.text(:all).include?("graphql") }
+      # Let's look around if you can't find it in the previous line
+      graphql_script = scripts.find { |s| s.text(:all).include?("items") } if graphql_script.nil?
       graphql_text = graphql_script.text(:all)
 
       # Clean up the javascript so we have pure JSON

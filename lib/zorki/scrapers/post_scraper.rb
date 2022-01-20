@@ -13,6 +13,7 @@ module Zorki
       # - Number of likes *
       # - Hashtags
 
+      # video slideshows https://www.instagram.com/p/CY7KxwYOFBS/?utm_source=ig_embed&utm_campaign=loading
       login
 
       visit("/p/#{id}/")
@@ -20,33 +21,32 @@ module Zorki
 
       # We need to see if this is a single image post or a slideshow. We do that
       # by looking for a single image, if it's not there, we assume the alternative.
-      if graphql_object["graphql"]["shortcode_media"]["is_video"] == false
+      unless graphql_object["items"][0].has_key?("video_versions")
         # Check if there is a slideshow or not
-        if graphql_object["graphql"]["shortcode_media"]["edge_sidecar_to_children"].nil?
+        unless graphql_object["items"][0].has_key?("carousel_media")
           # Single image
-          image_url = graphql_object["graphql"]["shortcode_media"]["display_url"]
+          image_url = graphql_object["items"][0]["image_versions2"]["candidates"][0]["url"]
           images = [Zorki.retrieve_media(image_url)]
         else
           # Slideshow
-          images = graphql_object["graphql"]["shortcode_media"]["edge_sidecar_to_children"]["edges"].map do |edge|
-            Zorki.retrieve_media(edge["node"]["display_url"])
+          images = graphql_object["items"][0]["carousel_media"].map do |media|
+            Zorki.retrieve_media(media["image_versions2"]["candidates"][0]["url"])
           end
         end
       else
         # some of these I've seen in both ways, thus the commented out lines
         # video_url = graphql_object["entry_data"]["PostPage"].first["graphql"]["shortcode_media"]["video_url"]
-        video_url = graphql_object["graphql"]["shortcode_media"]["video_url"]
+        video_url = graphql_object["items"][0]["video_versions"][0]["url"]
         video = Zorki.retrieve_media(video_url)
         # video_preview_image_url = graphql_object["entry_data"]["PostPage"].first["graphql"]["shortcode_media"]["display_resources"].last["src"]
-        video_preview_image_url = graphql_object["graphql"]["shortcode_media"]["display_url"]
+        video_preview_image_url = graphql_object["items"][0]["image_versions2"]["candidates"][0]["url"]
         video_preview_image = Zorki.retrieve_media(video_preview_image_url)
       end
 
-      text = graphql_object["graphql"]["shortcode_media"]["edge_media_to_caption"]["edges"].first["node"]["text"]
-      date = DateTime.strptime("#{graphql_object["graphql"]["shortcode_media"]["taken_at_timestamp"]}", "%s")
-      number_of_likes = graphql_object["graphql"]["shortcode_media"]["edge_media_preview_like"]["count"]
-      username = graphql_object["graphql"]["shortcode_media"]["owner"]["username"]
-
+      text = graphql_object["items"][0]["caption"]["text"]
+      date = graphql_object["items"][0]["taken_at"]
+      number_of_likes = graphql_object["items"][0]["like_count"]
+      username = graphql_object["items"][0]["caption"]["user"]["username"]
       # This has to run last since it switches pages
       user = User.lookup([username]).first
 
