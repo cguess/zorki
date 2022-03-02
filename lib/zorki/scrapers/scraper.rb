@@ -42,6 +42,7 @@ module Zorki
       graphql_text = graphql_text.reverse
       Oj.load(graphql_text)
     end
+
   private
 
     def login
@@ -74,7 +75,7 @@ module Zorki
     # Convert a string to an integer
     def number_string_to_integer(number_string)
       # First we have to remove any commas in the number or else it all breaks
-      number_string = number_string.gsub(",", "")
+      number_string = number_string.delete(",")
       # Is the last digit not a number? If so, we're going to have to multiply it by some multiplier
       should_expand = /[0-9]/.match(number_string[-1, 1]).nil?
 

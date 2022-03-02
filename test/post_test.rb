@@ -33,7 +33,7 @@ class PostTest < Minitest::Test
   end
 
   def test_a_video_post_returns_properly_when_scraped
-    post = Zorki::Post.lookup(["CGVzUHYFUwf"]).first
+    post = Zorki::Post.lookup(["Cak2RfYhqvE"]).first
     assert_not_nil post.video_file_name
     assert_not_nil post.video_preview_image
   end
