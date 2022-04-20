@@ -6,7 +6,13 @@ require "dotenv/load"
 require "oj"
 require "selenium-webdriver"
 
-Capybara.default_driver = :selenium_chrome
+Capybara.register_driver :chrome do |app|
+  client = Selenium::WebDriver::Remote::Http::Default.new
+  client.read_timeout = 10  # Don't wait 60 seconds to return Net::ReadTimeoutError. We'll retry through Hypatia after 10 seconds
+  Capybara::Selenium::Driver.new(app, browser: :chrome, http_client: client)
+end
+
+#Capybara.default_driver = :selenium_chrome
 Capybara.app_host = "https://instagram.com"
 Capybara.default_max_wait_time = 15
 
@@ -15,7 +21,7 @@ module Zorki
     include Capybara::DSL
 
     def initialize
-      Capybara.default_driver = :selenium_chrome
+      Capybara.default_driver = :chrome
       Capybara.app_host = "https://instagram.com"
       Capybara.default_max_wait_time = 15
     end
