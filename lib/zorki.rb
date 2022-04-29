@@ -18,6 +18,20 @@ module Zorki
     end
   end
 
+  class RetryableError < Error; end
+
+  class ImageRequestTimedOutError < RetryableError
+    def initialize(msg = "Zorki encountered a timeout error requesting an image")
+      super
+    end
+  end
+
+  class ImageRequestFailedError < RetryableError
+    def initialize(msg = "Zorki received a non-200 response requesting an image")
+      super
+    end
+  end
+
   define_setting :temp_storage_location, "tmp/zorki"
 
   # Get an image from a URL and save to a temp folder set in the configuration under
