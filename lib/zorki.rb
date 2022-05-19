@@ -44,7 +44,7 @@ module Zorki
 
     # Do some basic checks so we just empty out if there's something weird in the file extension
     # that could do some harm.
-    if extension.length > 0
+    if extension.length.positive?
       extension = nil unless /^[a-zA-Z0-9]+$/.match?(extension)
       extension = ".#{extension}" unless extension.nil?
     end
@@ -63,5 +63,4 @@ private
     return if File.exist?(Zorki.temp_storage_location) && File.directory?(Zorki.temp_storage_location)
     FileUtils.mkdir_p Zorki.temp_storage_location
   end
-
 end

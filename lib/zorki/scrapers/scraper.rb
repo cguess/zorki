@@ -12,18 +12,19 @@ Capybara.register_driver :chrome do |app|
   Capybara::Selenium::Driver.new(app, browser: :chrome, http_client: client)
 end
 
-#Capybara.default_driver = :selenium_chrome
-Capybara.app_host = "https://instagram.com"
+Capybara.default_driver = :selenium_chrome
 Capybara.default_max_wait_time = 15
+Capybara.threadsafe = true
+Capybara.reuse_server = true
+Capybara.app_host = "https://instagram.com"
 
 module Zorki
   class Scraper
     include Capybara::DSL
 
     def initialize
-      Capybara.default_driver = :chrome
+      Capybara.default_driver = :selenium_chrome
       Capybara.app_host = "https://instagram.com"
-      Capybara.default_max_wait_time = 15
     end
 
     # Instagram uses GraphQL (like most of Facebook I think), and returns an object that actually
@@ -33,7 +34,7 @@ module Zorki
     def find_graphql_script
       scripts = all("script", visible: false)
       # We search for a quoted term to find a JSON string that uses "graphql" as a key
-      graphql_script = scripts.find { |s| s.text(:all).include?('"graphql"') }
+      # graphql_script = scripts.find { |s| s.text(:all).include?('"graphql"') }
       # Let's look around if you can't find it in the previous line
       graphql_script = scripts.find { |s| s.text(:all).include?("items") }
       graphql_script = scripts.find { |s| s.text(:all).include?("graphql") } if graphql_script.nil?
@@ -55,16 +56,25 @@ module Zorki
   private
 
     def login
-      raise Zorki::Error
-
       # Go to the home page
-      visit("/")
+      visit("https://instagram.com")
       # Check if we're redirected to a login page, if we aren't we're already logged in
       return unless page.has_xpath?('//*[@id="loginForm"]/div/div[3]/button')
 
-      fill_in("username", with: ENV["INSTAGRAM_USER_NAME"])
-      fill_in("password", with: ENV["INSTAGRAM_PASSWORD"])
-      click_on("Log In")
+      loop_count = 0
+      while loop_count < 5 do
+        fill_in("username", with: ENV["INSTAGRAM_USER_NAME"])
+        fill_in("password", with: ENV["INSTAGRAM_PASSWORD"])
+        click_on("Log In")
+
+        break unless has_css?('p[data-testid="login-error-message"')
+        loop_count += 1
+        logger.debug("Error logging into Instagram, trying again")
+        sleep(10)
+      end
+
+      # Sometimes Instagram just... doesn't let you log in
+      raise "Instagram not accessible" if loop_count == 5
 
       # No we don't want to save our login credentials
       click_on("Not Now")
@@ -76,9 +86,9 @@ module Zorki
         if request.success?
           return request.body
         elsif request.timed_out?
-          raise Zorki::ImageRequestTimedOutError
+          raise Zorki::Error("Fetching image at #{url} timed out")
         else
-          raise Zorki::ImageRequestFailedError, "Fetching image at #{url} returned non-successful HTTP server response #{request.code}"
+          raise Zorki::Error("Fetching image at #{url} returned non-successful HTTP server response #{request.code}")
         end
       end
     end

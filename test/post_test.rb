@@ -3,6 +3,8 @@
 require "test_helper"
 
 class PostTest < Minitest::Test
+  i_suck_and_my_tests_are_order_dependent!()
+
   def teardown
     cleanup_temp_folder
   end
@@ -29,6 +31,11 @@ class PostTest < Minitest::Test
 
   def test_a_post_marked_as_misinfo_works_still
     post = Zorki::Post.lookup(["CBZkDi1nAty"]).first
+    assert_equal post.image_file_names.count, 1
+  end
+
+  def test_another_post_works
+    post = Zorki::Post.lookup(["CS7npabI8IN"]).first
     assert_equal post.image_file_names.count, 1
   end
 
