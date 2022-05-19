@@ -55,6 +55,8 @@ module Zorki
   private
 
     def login
+      raise Zorki::Error
+
       # Go to the home page
       visit("/")
       # Check if we're redirected to a login page, if we aren't we're already logged in
@@ -74,9 +76,9 @@ module Zorki
         if request.success?
           return request.body
         elsif request.timed_out?
-          raise Zorki::Error("Fetching image at #{url} timed out")
+          raise Zorki::ImageRequestTimedOutError
         else
-          raise Zorki::Error("Fetching image at #{url} returned non-successful HTTP server response #{request.code}")
+          raise Zorki::ImageRequestFailedError, "Fetching image at #{url} returned non-successful HTTP server response #{request.code}"
         end
       end
     end
