@@ -6,6 +6,13 @@ require "dotenv/load"
 require "oj"
 require "selenium-webdriver"
 
+Capybara.register_driver :chrome do |app|
+  client = Selenium::WebDriver::Remote::Http::Default.new
+  client.read_timeout = 10  # Don't wait 60 seconds to return Net::ReadTimeoutError. We'll retry through Hypatia after 10 seconds
+  Capybara::Selenium::Driver.new(app, browser: :chrome, http_client: client)
+end
+
+Capybara.default_driver = :selenium_chrome
 Capybara.default_max_wait_time = 15
 Capybara.threadsafe = true
 Capybara.reuse_server = true
