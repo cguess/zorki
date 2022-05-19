@@ -6,6 +6,14 @@ require "dotenv/load"
 require "oj"
 require "selenium-webdriver"
 
+Capybara.register_driver :chrome do |app|
+  client = Selenium::WebDriver::Remote::Http::Default.new
+  client.read_timeout = 10  # Don't wait 60 seconds to return Net::ReadTimeoutError. We'll retry through Hypatia after 10 seconds
+  Capybara::Selenium::Driver.new(app, browser: :chrome, http_client: client)
+end
+
+#Capybara.default_driver = :selenium_chrome
+Capybara.app_host = "https://instagram.com"
 Capybara.default_max_wait_time = 15
 Capybara.threadsafe = true
 Capybara.reuse_server = true
@@ -16,7 +24,7 @@ module Zorki
     include Capybara::DSL
 
     def initialize
-      Capybara.default_driver = :selenium_chrome
+      Capybara.default_driver = :chrome
       Capybara.app_host = "https://instagram.com"
     end
 
@@ -49,6 +57,8 @@ module Zorki
   private
 
     def login
+      raise Zorki::Error
+
       # Go to the home page
       visit("https://instagram.com")
       # Check if we're redirected to a login page, if we aren't we're already logged in
@@ -79,9 +89,9 @@ module Zorki
         if request.success?
           return request.body
         elsif request.timed_out?
-          raise Zorki::Error("Fetching image at #{url} timed out")
+          raise Zorki::ImageRequestTimedOutError
         else
-          raise Zorki::Error("Fetching image at #{url} returned non-successful HTTP server response #{request.code}")
+          raise Zorki::ImageRequestFailedError, "Fetching image at #{url} returned non-successful HTTP server response #{request.code}"
         end
       end
     end
