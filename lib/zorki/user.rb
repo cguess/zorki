@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "byebug"
 module Zorki
   class User
     def self.lookup(usernames = [])
