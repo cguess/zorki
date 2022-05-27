@@ -5,6 +5,7 @@ require "capybara/dsl"
 require "dotenv/load"
 require "oj"
 require "selenium-webdriver"
+require "logger"
 
 Capybara.register_driver :chrome do |app|
   client = Selenium::WebDriver::Remote::Http::Default.new
@@ -21,6 +22,9 @@ Capybara.app_host = "https://instagram.com"
 module Zorki
   class Scraper
     include Capybara::DSL
+
+    @@logger = Logger.new(STDOUT)
+    @@logger.level = Logger::WARN
 
     def initialize
       Capybara.default_driver = :selenium_chrome
@@ -69,7 +73,7 @@ module Zorki
 
         break unless has_css?('p[data-testid="login-error-message"')
         loop_count += 1
-        logger.debug("Error logging into Instagram, trying again")
+        @@logger.debug("Error logging into Instagram, trying again")
         sleep(10)
       end
 

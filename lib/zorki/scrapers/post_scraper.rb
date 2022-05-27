@@ -13,6 +13,8 @@ module Zorki
       # - Number of likes *
       # - Hashtags
 
+      @@logger.debug "DSLHFLSFHJSDILFHOISOIFHSOFH"
+
       Capybara.app_host = "https://instagram.com"
 
       # video slideshows https://www.instagram.com/p/CY7KxwYOFBS/?utm_source=ig_embed&utm_campaign=loading

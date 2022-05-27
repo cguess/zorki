@@ -1,10 +1,5 @@
 # frozen_string_literal: true
 
-require "logger"
-
-logger = Logger.new(STDOUT)
-logger.level = Logger::WARN
-
 require_relative "zorki/version"
 
 # Representative objects we create
