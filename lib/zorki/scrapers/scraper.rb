@@ -77,18 +77,20 @@ module Zorki
       # Check if we're redirected to a login page, if we aren't we're already logged in
       return unless page.has_xpath?('//*[@id="loginForm"]/div/div[3]/button')
 
+      debugger
       sleep(rand * 10)
 
       loop_count = 0
       while loop_count < 5 do
         fill_in("username", with: ENV["INSTAGRAM_USER_NAME"])
+        sleep(rand * 10)
         fill_in("password", with: ENV["INSTAGRAM_PASSWORD"])
         click_on("Log In")
 
         break unless has_css?('p[data-testid="login-error-message"')
         loop_count += 1
         @@logger.debug("Error logging into Instagram, trying again")
-        sleep(rand * 1.4)
+        sleep(rand * 30.4)
       end
 
       # Sometimes Instagram just... doesn't let you log in
