@@ -6,6 +6,7 @@ require "dotenv/load"
 require "oj"
 require "selenium-webdriver"
 require "logger"
+require "debug"
 
 Capybara.register_driver :chrome do |app|
   client = Selenium::WebDriver::Remote::Http::Default.new
@@ -49,11 +50,22 @@ module Zorki
       # We do this by scanning until we get to the first `{`, taking the subindex, then doing the
       # same backwards to find `}`
       index = graphql_text.index("{")
+      # graphql_text = graphql_text[index...]
+
+      # We now do it again, due to some javascript being tossed in
+      index = graphql_text.index("{", index + 1)
+      index = graphql_text.index("{", index + 1)
+
       graphql_text = graphql_text[index...]
+
       graphql_text = graphql_text.reverse
       index = graphql_text.index("}")
+      index = graphql_text.index("}", index + 1)
+      index = graphql_text.index("}", index + 1)
+
       graphql_text = graphql_text[index..] # this is not inclusive on purpose
       graphql_text = graphql_text.reverse
+
       Oj.load(graphql_text)
     end
 
@@ -65,6 +77,8 @@ module Zorki
       # Check if we're redirected to a login page, if we aren't we're already logged in
       return unless page.has_xpath?('//*[@id="loginForm"]/div/div[3]/button')
 
+      sleep(rand * 10)
+
       loop_count = 0
       while loop_count < 5 do
         fill_in("username", with: ENV["INSTAGRAM_USER_NAME"])
@@ -74,7 +88,7 @@ module Zorki
         break unless has_css?('p[data-testid="login-error-message"')
         loop_count += 1
         @@logger.debug("Error logging into Instagram, trying again")
-        sleep(10)
+        sleep(rand * 1.4)
       end
 
       # Sometimes Instagram just... doesn't let you log in
