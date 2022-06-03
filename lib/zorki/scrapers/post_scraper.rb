@@ -19,9 +19,7 @@ module Zorki
 
       # video slideshows https://www.instagram.com/p/CY7KxwYOFBS/?utm_source=ig_embed&utm_campaign=loading
       login
-
-      visit("/p/#{id}/")
-      graphql_object = find_graphql_script
+      graphql_object = get_content_of_subpage_from_url("/p/#{id}/", "/info")
 
       # We need to see if this is a single image post or a slideshow. We do that
       # by looking for a single image, if it's not there, we assume the alternative.
