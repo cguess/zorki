@@ -53,8 +53,8 @@ module Zorki
       # the one we want, and then moves on.
       response_body = nil
 
-      @@session_id = page.driver.browser.instance_variable_get(:@bridge).session_id if @@session_id.nil?
-      page.driver.browser.instance_variable_get(:@bridge).instance_variable_set(:@session_id, @@session_id)
+      # @@session_id = page.driver.browser.instance_variable_get(:@bridge).session_id if @@session_id.nil?
+      # page.driver.browser.instance_variable_get(:@bridge).instance_variable_set(:@session_id, @@session_id)
 
       page.driver.browser.intercept do |request, &continue|
         # This passes the request forward unmodified, since we only care about the response
