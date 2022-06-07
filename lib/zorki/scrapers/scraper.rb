@@ -8,13 +8,22 @@ require "selenium-webdriver"
 require "logger"
 require "debug"
 
+# 2022-06-07 14:15:23 WARN Selenium [DEPRECATION] [:browser_options] :options as a parameter for driver initialization is deprecated. Use :capabilities with an Array of value capabilities/options if necessary instead.
+
+options = Selenium::WebDriver::Chrome::Options.new
+options.add_argument("--window-size=1400,1400")
+options.add_argument("--no-sandbox")
+options.add_argument("--disable-dev-shm-usage")
+options.add_argument("--user-data-dir=/tmp/tarun")
+
+
 Capybara.register_driver :chrome do |app|
   client = Selenium::WebDriver::Remote::Http::Default.new
   client.read_timeout = 10  # Don't wait 60 seconds to return Net::ReadTimeoutError. We'll retry through Hypatia after 10 seconds
-  Capybara::Selenium::Driver.new(app, browser: :chrome, http_client: client)
+  Capybara::Selenium::Driver.new(app, browser: :chrome, url: "http://localhost:4444/wd/hub", capabilities: options, http_client: client)
 end
 
-Capybara.default_driver = :selenium_chrome
+# Capybara.default_driver = :selenium_chrome
 Capybara.default_max_wait_time = 15
 Capybara.threadsafe = true
 Capybara.reuse_server = true
@@ -27,8 +36,10 @@ module Zorki
     @@logger = Logger.new(STDOUT)
     @@logger.level = Logger::WARN
 
+    @@session_id = nil
+
     def initialize
-      Capybara.default_driver = :selenium_chrome
+      Capybara.default_driver = :chrome
       Capybara.app_host = "https://instagram.com"
     end
 
@@ -42,29 +53,38 @@ module Zorki
       # the one we want, and then moves on.
       response_body = nil
 
+      @@session_id = page.driver.browser.instance_variable_get(:@bridge).session_id if @@session_id.nil?
+      page.driver.browser.instance_variable_get(:@bridge).instance_variable_set(:@session_id, @@session_id)
+
       page.driver.browser.intercept do |request, &continue|
         # This passes the request forward unmodified, since we only care about the response
+        continue.call(request) && next unless request.url.include?(subpage_search)
+
         continue.call(request) do |response|
+          # debugger
           # Check if 1. it's the call we're looking for, and 2. not a CORS prefetch
           if request.url.include?(subpage_search) && response.body.present?
             # Setting this will finish up the loop we start below
             response_body = response.body
-
-            # Remove this callback so other requests don't go through the same thing
-            page.driver.browser.devtools.callbacks["Fetch.requestPaused"] = []
           end
         end
+      rescue Selenium::WebDriver::Error::WebDriverError
+        @@logger.debug "(INFO) Error receiving #{request.url}"
+        # Eat them
       end
 
       # Now that the intercept is set up, we visit the page we want
       visit(url)
-
       # We wait until the correct intercept is processed or we've waited 60 seconds
       count = 0
-      while response_body.nil? || count > 60
+      while response_body.nil? && count < 60
         sleep(1)
         count += 1
       end
+
+      # debugger
+      # Remove this callback so other requests don't go through the same thing
+      page.driver.browser.devtools.callbacks["Fetch.requestPaused"] = []
 
       Oj.load(response_body)
     end
@@ -72,6 +92,7 @@ module Zorki
   private
 
     def login
+      # Check if we're on a Instagram page already, if not visit it.
       # We don't have to login if we already are
       begin
         return if find_field("Search").present?

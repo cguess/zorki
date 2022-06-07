@@ -31,13 +31,17 @@ And then execute:
 
     $ bundle install
 
-Or install it yourself as:
 
-    $ gem install zorki
+### Selenium Standalone
+We use Selenium's standalone package. To set it up:
+1. Download the "Selenium Server (Grid)" JAR package at https://www.selenium.dev/downloads/
+1. Save it to the folder of this package
+1. Test that it works by running `java -jar ./selenium-server-4.2.1.jar standalone` (note the actual version you downloaded)
 
-## Usage
+## Testing
 
-TODO: Write usage instructions here
+1. Turn on the Selenium server `java -jar ./selenium-server-4.2.1.jar standalone` in a separate pane or window
+1. `rake test`
 
 ## Development
 
