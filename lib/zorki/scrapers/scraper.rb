@@ -93,6 +93,8 @@ module Zorki
 
     def login
       # Check if we're on a Instagram page already, if not visit it.
+      visit ("https://instagram.com") unless page.driver.browser.current_url.include? "instagram.com"
+
       # We don't have to login if we already are
       begin
         return if find_field("Search").present?
