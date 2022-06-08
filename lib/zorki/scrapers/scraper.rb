@@ -24,10 +24,10 @@ Capybara.register_driver :chrome do |app|
 end
 
 # Capybara.default_driver = :selenium_chrome
-Capybara.default_max_wait_time = 15
+Capybara.default_max_wait_time = 600
 Capybara.threadsafe = true
 Capybara.reuse_server = true
-Capybara.app_host = "https://instagram.com"
+# Capybara.app_host = "https://instagram.com"
 
 module Zorki
   class Scraper
