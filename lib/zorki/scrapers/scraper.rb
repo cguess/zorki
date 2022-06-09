@@ -17,17 +17,15 @@ options.add_argument("--disable-dev-shm-usage")
 options.add_argument("--user-data-dir=/tmp/tarun")
 
 
-Capybara.register_driver :chrome do |app|
+Capybara.register_driver :chrome_zorki do |app|
   client = Selenium::WebDriver::Remote::Http::Default.new
-  client.read_timeout = 10  # Don't wait 60 seconds to return Net::ReadTimeoutError. We'll retry through Hypatia after 10 seconds
+  client.read_timeout = 60  # Don't wait 60 seconds to return Net::ReadTimeoutError. We'll retry through Hypatia after 10 seconds
   Capybara::Selenium::Driver.new(app, browser: :chrome, url: "http://localhost:4444/wd/hub", capabilities: options, http_client: client)
 end
 
-# Capybara.default_driver = :selenium_chrome
-Capybara.default_max_wait_time = 600
 Capybara.threadsafe = true
-Capybara.reuse_server = true
-# Capybara.app_host = "https://instagram.com"
+Capybara.default_max_wait_time = 60
+# Capybara.reuse_server = true
 
 module Zorki
   class Scraper
@@ -39,8 +37,7 @@ module Zorki
     @@session_id = nil
 
     def initialize
-      Capybara.default_driver = :chrome
-      Capybara.app_host = "https://instagram.com"
+      Capybara.current_driver = :chrome_zorki
     end
 
     # Instagram uses GraphQL (like most of Facebook I think), and returns an object that actually
@@ -61,12 +58,8 @@ module Zorki
         continue.call(request) && next unless request.url.include?(subpage_search)
 
         continue.call(request) do |response|
-          # debugger
-          # Check if 1. it's the call we're looking for, and 2. not a CORS prefetch
-          if request.url.include?(subpage_search) && response.body.present?
-            # Setting this will finish up the loop we start below
-            response_body = response.body
-          end
+          # Check if not a CORS prefetch and finish up if not
+          response_body = response.body if response.body.present?
         end
       rescue Selenium::WebDriver::Error::WebDriverError
         @@logger.debug "(INFO) Error receiving #{request.url}"
@@ -76,13 +69,15 @@ module Zorki
       # Now that the intercept is set up, we visit the page we want
       visit(url)
       # We wait until the correct intercept is processed or we've waited 60 seconds
-      count = 0
-      while response_body.nil? && count < 60
-        sleep(1)
-        count += 1
+      start_time = Time.now
+      while response_body.nil? && (Time.now - start_time) < 60
+        sleep(0.1)
       end
 
-      # debugger
+      # Instagram loading is weird, however, by this point we already have what we're looking for
+      # so we bail out quick. This is the best method I've found.
+      page.quit
+
       # Remove this callback so other requests don't go through the same thing
       page.driver.browser.devtools.callbacks["Fetch.requestPaused"] = []
 
@@ -100,17 +95,12 @@ module Zorki
         return if find_field("Search").present?
       rescue Capybara::ElementNotFound; end
 
-      # Go to the home page
-      visit("https://instagram.com")
       # Check if we're redirected to a login page, if we aren't we're already logged in
       return unless page.has_xpath?('//*[@id="loginForm"]/div/div[3]/button')
-
-      sleep(rand * 10)
 
       loop_count = 0
       while loop_count < 5 do
         fill_in("username", with: ENV["INSTAGRAM_USER_NAME"])
-        sleep(rand * 10)
         fill_in("password", with: ENV["INSTAGRAM_PASSWORD"])
         click_on("Log In")
 

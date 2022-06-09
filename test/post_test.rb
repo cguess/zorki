@@ -35,8 +35,8 @@ class PostTest < Minitest::Test
   end
 
   def test_another_post_works
-    post = Zorki::Post.lookup(["CS7npabI8IN"]).first
-    assert_equal post.image_file_names.count, 1
+    post = Zorki::Post.lookup(["CS17kK3n5-J"]).first
+    assert_not_nil post.video_file_name
   end
 
   def test_a_video_post_returns_properly_when_scraped
