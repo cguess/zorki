@@ -25,7 +25,7 @@ end
 
 Capybara.threadsafe = true
 Capybara.default_max_wait_time = 60
-# Capybara.reuse_server = true
+Capybara.reuse_server = true
 
 module Zorki
   class Scraper
