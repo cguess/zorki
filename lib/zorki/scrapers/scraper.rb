@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# require_relative "user_scraper"
 require "capybara/dsl"
 require "dotenv/load"
 require "oj"
@@ -15,7 +14,6 @@ options.add_argument("--window-size=1400,1400")
 options.add_argument("--no-sandbox")
 options.add_argument("--disable-dev-shm-usage")
 options.add_argument("--user-data-dir=/tmp/tarun")
-
 
 Capybara.register_driver :chrome_zorki do |app|
   client = Selenium::WebDriver::Remote::Http::Default.new
@@ -87,6 +85,9 @@ module Zorki
   private
 
     def login
+      # Reset the sessions so that there's nothing laying around
+      page.quit
+
       # Check if we're on a Instagram page already, if not visit it.
       visit ("https://instagram.com") unless page.driver.browser.current_url.include? "instagram.com"
 
