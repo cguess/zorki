@@ -44,4 +44,10 @@ class PostTest < Minitest::Test
     assert_not_nil post.video_file_name
     assert_not_nil post.video_preview_image
   end
+
+  def test_a_post_has_been_removed
+    assert_raises Zorki::ContentUnavailableError do
+      Zorki::Post.lookup(["sfhslsfjdls"])
+    end
+  end
 end
