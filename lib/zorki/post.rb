@@ -19,7 +19,8 @@ module Zorki
                 :number_of_likes,
                 :user,
                 :video_file_name,
-                :video_preview_image
+                :video_preview_image,
+                :screenshot_file
 
   private
 
@@ -32,6 +33,7 @@ module Zorki
       @user = hash[:user]
       @video_file_name = hash[:video]
       @video_preview_image = hash[:video_preview_image]
+      @screenshot_file = hash[:screenshot_file]
     end
 
     class << self
